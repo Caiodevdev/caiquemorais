@@ -1,0 +1,17 @@
+name: Caiquemorais
+version: ${version}
+main: org.caique.caiquemorais.Caiquemorais
+api-version: 1.20
+commands:
+  login:
+    description: Faz login no servidor
+    usage: /<command> <senha>
+  register:
+    description: Registra uma conta no servidor
+    usage: /<command> <senha> <confirmação>
+  g:
+    description: Envia uma mensagem no chat global
+    usage: /<command> <mensagem>
+  tags:
+    description: Gerencia as tags do jogador
+    usage: /<command> [tag]
