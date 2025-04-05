@@ -11,6 +11,7 @@ import org.caique.caiquemorais.utils.MessageUtils;
 
 import java.sql.SQLException;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 public class TagsCommand implements CommandExecutor {
     private final Caiquemorais plugin;
@@ -31,15 +32,16 @@ public class TagsCommand implements CommandExecutor {
         Player player = (Player) sender;
 
         if (args.length == 0) {
-            MessageUtils.sendMessage(player, "&eTags disponíveis:");
-            for (Map.Entry<String, String> entry : tagManager.getAvailableTags().entrySet()) {
-                MessageUtils.sendMessage(player, entry.getValue() + "[" + entry.getKey() + "]");
-            }
+            // Lista as tags em uma linha
+            String tagList = tagManager.getAvailableTags().entrySet().stream()
+                    .map(entry -> entry.getValue() + "[" + entry.getKey() + "]")
+                    .collect(Collectors.joining(" "));
+            MessageUtils.sendMessage(player, "&eTags disponíveis: " + tagList);
             MessageUtils.sendMessage(player, "&eUse /tags <tag> para selecionar!");
             return true;
         }
 
-        String selectedTag = args[0].toUpperCase();
+        String selectedTag = args[0].toUpperCase(); // Sempre converte pra maiúsculo
         if (!tagManager.getAvailableTags().containsKey(selectedTag)) {
             MessageUtils.sendMessage(player, "&cTag inválida! Use /tags para ver as opções.");
             MessageUtils.playSound(player, Sound.ENTITY_VILLAGER_NO, 1.0f, 1.0f);
@@ -52,6 +54,7 @@ public class TagsCommand implements CommandExecutor {
             MessageUtils.playSound(player, Sound.ENTITY_PLAYER_LEVELUP, 1.0f, 1.0f);
         } catch (SQLException e) {
             MessageUtils.sendMessage(player, "&cErro ao setar tag: " + e.getMessage());
+            plugin.getLogger().severe("Erro ao setar tag: " + e.getMessage());
         }
         return true;
     }

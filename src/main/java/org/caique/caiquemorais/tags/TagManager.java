@@ -29,10 +29,14 @@ public class TagManager {
     }
 
     public void setPlayerTag(Player player, String tag) throws SQLException {
-        if (!availableTags.containsKey(tag)) return;
+        if (!availableTags.containsKey(tag)) {
+            plugin.getLogger().warning("Tentativa de setar tag inválida: " + tag);
+            return;
+        }
 
         PlayerData playerData = new PlayerData(plugin.getDatabaseManager());
         playerData.setTag(player, tag);
+        plugin.getLogger().info("Tag " + tag + " setada para " + player.getName());
         updatePlayerDisplay(player);
     }
 
@@ -65,6 +69,13 @@ public class TagManager {
                 team.setPrefix(availableTags.get(tag) + "[" + tag + "] ");
             }
 
+            // Remove o jogador de qualquer time anterior
+            for (Team existingTeam : scoreboard.getTeams()) {
+                if (existingTeam.hasEntry(player.getName()) && !existingTeam.getName().equals(teamName)) {
+                    existingTeam.removeEntry(player.getName());
+                }
+            }
+
             team.addEntry(player.getName());
             player.setDisplayName(team.getPrefix() + player.getName() + ChatColor.RESET);
             player.setPlayerListName(team.getPrefix() + player.getName() + ChatColor.RESET);
@@ -78,6 +89,6 @@ public class TagManager {
     }
 
     public void loadPlayerTag(Player player) {
-        updatePlayerDisplay(player); // Carrega a tag do banco ao entrar
+        updatePlayerDisplay(player);
     }
 }

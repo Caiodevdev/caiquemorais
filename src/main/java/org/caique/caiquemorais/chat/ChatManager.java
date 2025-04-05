@@ -14,7 +14,7 @@ public class ChatManager {
 
     public void sendLocalMessage(Player sender, String message) {
         String tag = tagManager.getPlayerTag(sender);
-        String formattedMessage = ChatColor.GRAY + "[L]" + tag + " " + sender.getName() + ": " + ChatColor.WHITE + message;
+        String formattedMessage = ChatColor.GRAY + "[L] " + tag + " " + sender.getName() + ": " + ChatColor.WHITE + message;
 
         for (Player nearby : sender.getWorld().getPlayers()) {
             if (nearby.getLocation().distance(sender.getLocation()) <= LOCAL_CHAT_RANGE) {
@@ -25,7 +25,7 @@ public class ChatManager {
 
     public void sendGlobalMessage(Player sender, String message) {
         String tag = tagManager.getPlayerTag(sender);
-        String formattedMessage = ChatColor.YELLOW + "[G]" + tag + " " + sender.getName() + ": " + ChatColor.WHITE + message;
+        String formattedMessage = ChatColor.YELLOW + "[G] " + tag + " " + sender.getName() + ": " + ChatColor.WHITE + message;
 
         for (Player online : sender.getServer().getOnlinePlayers()) {
             online.sendMessage(formattedMessage);
