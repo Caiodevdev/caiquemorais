@@ -51,7 +51,8 @@ public class DatabaseManager {
                 "username VARCHAR(16) NOT NULL, " +
                 "password VARCHAR(255) NOT NULL, " +
                 "is_logged_in BOOLEAN DEFAULT FALSE, " +
-                "tag VARCHAR(10) DEFAULT ''" +
+                "tag VARCHAR(10) DEFAULT '', " +
+                "vip_expires BIGINT DEFAULT 0" + // Coluna para expiração do VIP (timestamp)
                 ")";
         try (Statement stmt = connection.createStatement()) {
             stmt.execute(sql);

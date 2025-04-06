@@ -15,3 +15,6 @@ commands:
   tags:
     description: Gerencia as tags do jogador
     usage: /<command> [tag]
+  vipinfo:
+    description: Vê os dias do seu VIP
+    usage: /<command> <info>

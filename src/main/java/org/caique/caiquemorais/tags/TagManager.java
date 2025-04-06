@@ -26,6 +26,8 @@ public class TagManager {
         availableTags.put("COORD", ChatColor.AQUA.toString());
         availableTags.put("GER", ChatColor.DARK_RED.toString());
         availableTags.put("ADM", ChatColor.DARK_BLUE.toString());
+        availableTags.put("VIP", ChatColor.YELLOW.toString());
+        availableTags.put("VIP+", ChatColor.YELLOW.toString());
     }
 
     public void setPlayerTag(Player player, String tag) throws SQLException {
@@ -44,7 +46,11 @@ public class TagManager {
         try {
             PlayerData playerData = new PlayerData(plugin.getDatabaseManager());
             String tag = playerData.getTag(player);
-            return tag.isEmpty() ? "" : availableTags.get(tag) + "[" + tag + "]" + ChatColor.RESET;
+            if (tag.isEmpty()) return "";
+            if (tag.equals("VIP+")) {
+                return ChatColor.YELLOW + "[" + "VIP" + ChatColor.AQUA + "+" + ChatColor.YELLOW + "]" + ChatColor.RESET + " ";
+            }
+            return availableTags.get(tag) + "[" + tag + "]" + ChatColor.RESET + " ";
         } catch (SQLException e) {
             plugin.getLogger().severe("Erro ao pegar tag: " + e.getMessage());
             return "";
@@ -66,10 +72,13 @@ public class TagManager {
 
             if (team == null) {
                 team = scoreboard.registerNewTeam(teamName);
-                team.setPrefix(availableTags.get(tag) + "[" + tag + "] ");
+                if (tag.equals("VIP+")) {
+                    team.setPrefix(ChatColor.YELLOW + "[" + "VIP" + ChatColor.AQUA + "+" + ChatColor.YELLOW + "]" + ChatColor.RESET + " ");
+                } else {
+                    team.setPrefix(availableTags.get(tag) + "[" + tag + "]" + ChatColor.RESET + " ");
+                }
             }
 
-            // Remove o jogador de qualquer time anterior
             for (Team existingTeam : scoreboard.getTeams()) {
                 if (existingTeam.hasEntry(player.getName()) && !existingTeam.getName().equals(teamName)) {
                     existingTeam.removeEntry(player.getName());
@@ -77,8 +86,8 @@ public class TagManager {
             }
 
             team.addEntry(player.getName());
-            player.setDisplayName(team.getPrefix() + player.getName() + ChatColor.RESET);
-            player.setPlayerListName(team.getPrefix() + player.getName() + ChatColor.RESET);
+            player.setDisplayName(team.getPrefix() + player.getName());
+            player.setPlayerListName(team.getPrefix() + player.getName());
 
             for (Player online : plugin.getServer().getOnlinePlayers()) {
                 online.setScoreboard(scoreboard);

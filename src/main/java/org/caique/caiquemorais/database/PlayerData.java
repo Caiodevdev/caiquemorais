@@ -16,7 +16,7 @@ public class PlayerData {
         try (PreparedStatement stmt = db.getConnection().prepareStatement(sql)) {
             stmt.setString(1, player.getUniqueId().toString());
             stmt.setString(2, player.getName());
-            stmt.setString(3, password); // Em produção, usar hash
+            stmt.setString(3, password);
             stmt.executeUpdate();
         }
     }
@@ -36,7 +36,7 @@ public class PlayerData {
             stmt.setString(1, player.getUniqueId().toString());
             ResultSet rs = stmt.executeQuery();
             if (rs.next()) {
-                return rs.getString("password").equals(password); // Em produção, comparar hash
+                return rs.getString("password").equals(password);
             }
             return false;
         }
@@ -78,6 +78,33 @@ public class PlayerData {
                 return rs.getString("tag");
             }
             return "";
+        }
+    }
+
+    public void setVipExpiration(Player player, long expirationTime) throws SQLException {
+        if (!isRegistered(player)) {
+            registerPlayer(player, "default_password"); // Registra o jogador se não existir
+        }
+        String sql = "UPDATE players SET vip_expires = ? WHERE uuid = ?";
+        try (PreparedStatement stmt = db.getConnection().prepareStatement(sql)) {
+            stmt.setLong(1, expirationTime);
+            stmt.setString(2, player.getUniqueId().toString());
+            stmt.executeUpdate();
+        }
+    }
+
+    public long getVipExpiration(Player player) throws SQLException {
+        if (!isRegistered(player)) {
+            return 0; // Retorna 0 se o jogador não estiver registrado
+        }
+        String sql = "SELECT vip_expires FROM players WHERE uuid = ?";
+        try (PreparedStatement stmt = db.getConnection().prepareStatement(sql)) {
+            stmt.setString(1, player.getUniqueId().toString());
+            ResultSet rs = stmt.executeQuery();
+            if (rs.next()) {
+                return rs.getLong("vip_expires");
+            }
+            return 0;
         }
     }
 }
