@@ -27,7 +27,7 @@ public class DatabaseManager {
                     username,
                     password
             );
-            createTable();
+            createTables();
             plugin.getLogger().info("Conectado ao MySQL com sucesso!");
         } catch (SQLException e) {
             plugin.getLogger().severe("Erro ao conectar ao MySQL: " + e.getMessage());
@@ -45,17 +45,37 @@ public class DatabaseManager {
         }
     }
 
-    private void createTable() throws SQLException {
-        String sql = "CREATE TABLE IF NOT EXISTS players (" +
+    private void createTables() throws SQLException {
+        // Tabela players (já existente)
+        String playersTable = "CREATE TABLE IF NOT EXISTS players (" +
                 "uuid VARCHAR(36) PRIMARY KEY, " +
                 "username VARCHAR(16) NOT NULL, " +
                 "password VARCHAR(255) NOT NULL, " +
                 "is_logged_in BOOLEAN DEFAULT FALSE, " +
                 "tag VARCHAR(10) DEFAULT '', " +
-                "vip_expires BIGINT DEFAULT 0" + // Coluna para expiração do VIP (timestamp)
+                "vip_expires BIGINT DEFAULT 0" +
                 ")";
         try (Statement stmt = connection.createStatement()) {
-            stmt.execute(sql);
+            stmt.execute(playersTable);
+        }
+
+        // Tabela punishments
+        String punishmentsTable = "CREATE TABLE IF NOT EXISTS punishments (" +
+                "id INT AUTO_INCREMENT PRIMARY KEY, " +
+                "uuid VARCHAR(36) NOT NULL, " +
+                "username VARCHAR(16) NOT NULL, " +
+                "punisher_uuid VARCHAR(36) NOT NULL, " +
+                "punisher_name VARCHAR(16) NOT NULL, " +
+                "reason VARCHAR(255) NOT NULL, " +
+                "proof_link VARCHAR(255) NOT NULL, " +
+                "punishment_type VARCHAR(50) NOT NULL, " +
+                "duration BIGINT NOT NULL, " +
+                "issued_at BIGINT NOT NULL, " +
+                "expires_at BIGINT NOT NULL, " +
+                "active BOOLEAN DEFAULT TRUE" +
+                ")";
+        try (Statement stmt = connection.createStatement()) {
+            stmt.execute(punishmentsTable);
         }
     }
 

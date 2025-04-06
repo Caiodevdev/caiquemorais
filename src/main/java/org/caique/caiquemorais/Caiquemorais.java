@@ -35,6 +35,9 @@ public final class Caiquemorais extends JavaPlugin {
         getCommand("g").setExecutor(new GlobalChatCommand(this, chatManager));
         getCommand("tags").setExecutor(new TagsCommand(this, tagManager));
         getCommand("vipinfo").setExecutor(new VipCommand(this));
+        getCommand("punir").setExecutor(new PunishCommand(this));
+        getCommand("desbanir").setExecutor(new UnbanCommand(this));
+        getCommand("checkpunir").setExecutor(new CheckPunishCommand(this));
 
         // Registrar eventos
         getServer().getPluginManager().registerEvents(new ChatListener(this, chatManager), this);

@@ -1,20 +1,39 @@
 name: Caiquemorais
-version: ${version}
+version: 1.0
 main: org.caique.caiquemorais.Caiquemorais
 api-version: 1.20
 commands:
   login:
     description: Faz login no servidor
-    usage: /<command> <senha>
+    usage: /login <senha>
   register:
-    description: Registra uma conta no servidor
-    usage: /<command> <senha> <confirmação>
+    description: Registra-se no servidor
+    usage: /register <senha> <confirmação>
   g:
-    description: Envia uma mensagem no chat global
-    usage: /<command> <mensagem>
+    description: Fala no chat global
+    usage: /g <mensagem>
   tags:
-    description: Gerencia as tags do jogador
-    usage: /<command> [tag]
+    description: Gerencia tags
+    usage: /tags [tag]
   vipinfo:
-    description: Vê os dias do seu VIP
-    usage: /<command> <info>
+    description: Mostra informações do VIP
+    usage: /vipinfo
+  punir:
+    description: Pune um jogador
+    usage: /punir <jogador> [motivo] [link da prova]
+  desbanir:
+    description: Desbane um jogador
+    usage: /desbanir <jogador>
+  checkpunir:
+    description: Verifica as punições de um jogador
+    usage: /checkpunir <jogador>
+permissions:
+  caiquemorais.punish:
+    description: Permite usar o comando /punir
+    default: op
+  caiquemorais.unban:
+    description: Permite usar o comando /desbanir
+    default: op
+  caiquemorais.checkpunish:
+    description: Permite usar o comando /checkpunir
+    default: op
