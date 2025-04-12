@@ -101,20 +101,18 @@ public class PunishmentManager {
             return;
         }
 
-        // Desativar a punição no banco de dados
-        String sql = "UPDATE punishments SET active = FALSE WHERE uuid = ? AND active = TRUE";
+        String sql = "UPDATE punishments SET active = FALSE, unbanned_by = ? WHERE uuid = ? AND active = TRUE";
         try (PreparedStatement stmt = db.getConnection().prepareStatement(sql)) {
-            stmt.setString(1, targetUuid);
+            stmt.setString(1, punisher.getName());
+            stmt.setString(2, targetUuid);
             stmt.executeUpdate();
         } catch (SQLException e) {
             plugin.getLogger().severe("Erro ao desbanir jogador: " + e.getMessage());
             return;
         }
 
-        // Remover o banimento
         Bukkit.getBanList(BanList.Type.NAME).pardon(targetName);
 
-        // Feedback
         MessageUtils.sendTitle(punisher, "§aJogador Desbanido", "§f" + targetName + " foi desbanido!", 10, 60, 10);
         MessageUtils.sendMessage(punisher, "§aVocê desbaniu " + targetName + " com sucesso.");
         MessageUtils.playSound(punisher, Sound.ENTITY_PLAYER_LEVELUP, 1.0f, 1.0f);
@@ -140,7 +138,8 @@ public class PunishmentManager {
                         rs.getLong("duration"),
                         rs.getLong("issued_at"),
                         rs.getLong("expires_at"),
-                        rs.getBoolean("active")
+                        rs.getBoolean("active"),
+                        rs.getString("unbanned_by")
                 ));
             }
         } catch (SQLException e) {
@@ -153,7 +152,7 @@ public class PunishmentManager {
         return punishmentTypes;
     }
 
-    private String formatDuration(long duration) {
+    public String formatDuration(long duration) { // De private pra public
         long days = duration / (24 * 60 * 60 * 1000);
         long hours = (duration % (24 * 60 * 60 * 1000)) / (60 * 60 * 1000);
         long minutes = (duration % (60 * 60 * 1000)) / (60 * 1000);

@@ -46,7 +46,6 @@ public class DatabaseManager {
     }
 
     private void createTables() throws SQLException {
-        // Tabela players (já existente)
         String playersTable = "CREATE TABLE IF NOT EXISTS players (" +
                 "uuid VARCHAR(36) PRIMARY KEY, " +
                 "username VARCHAR(16) NOT NULL, " +
@@ -59,7 +58,6 @@ public class DatabaseManager {
             stmt.execute(playersTable);
         }
 
-        // Tabela punishments
         String punishmentsTable = "CREATE TABLE IF NOT EXISTS punishments (" +
                 "id INT AUTO_INCREMENT PRIMARY KEY, " +
                 "uuid VARCHAR(36) NOT NULL, " +
@@ -72,7 +70,8 @@ public class DatabaseManager {
                 "duration BIGINT NOT NULL, " +
                 "issued_at BIGINT NOT NULL, " +
                 "expires_at BIGINT NOT NULL, " +
-                "active BOOLEAN DEFAULT TRUE" +
+                "active BOOLEAN DEFAULT TRUE, " +
+                "unbanned_by VARCHAR(16) DEFAULT NULL" +
                 ")";
         try (Statement stmt = connection.createStatement()) {
             stmt.execute(punishmentsTable);

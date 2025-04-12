@@ -13,9 +13,10 @@ public class Punishment {
     private final long issuedAt;
     private final long expiresAt;
     private final boolean active;
+    private final String unbannedBy;
 
     public Punishment(int id, String uuid, String username, String punisherUuid, String punisherName, String reason,
-                      String proofLink, String punishmentType, long duration, long issuedAt, long expiresAt, boolean active) {
+                      String proofLink, String punishmentType, long duration, long issuedAt, long expiresAt, boolean active, String unbannedBy) {
         this.id = id;
         this.uuid = uuid;
         this.username = username;
@@ -28,6 +29,7 @@ public class Punishment {
         this.issuedAt = issuedAt;
         this.expiresAt = expiresAt;
         this.active = active;
+        this.unbannedBy = unbannedBy;
     }
 
     public int getId() { return id; }
@@ -42,4 +44,5 @@ public class Punishment {
     public long getIssuedAt() { return issuedAt; }
     public long getExpiresAt() { return expiresAt; }
     public boolean isActive() { return active; }
+    public String getUnbannedBy() { return unbannedBy; }
 }
