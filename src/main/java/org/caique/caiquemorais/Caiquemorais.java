@@ -1,14 +1,17 @@
 package org.caique.caiquemorais;
 
+import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerJoinEvent;
+import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.caique.caiquemorais.chat.ChatListener;
 import org.caique.caiquemorais.chat.ChatManager;
 import org.caique.caiquemorais.commands.*;
 import org.caique.caiquemorais.database.DatabaseManager;
 import org.caique.caiquemorais.hotbar.HotbarManager;
+import org.caique.caiquemorais.lobby.LobbyManager;
 import org.caique.caiquemorais.scoreboard.ScoreboardManager;
 import org.caique.caiquemorais.tags.TagManager;
 import org.caique.caiquemorais.vip.VipCommand;
@@ -22,6 +25,7 @@ public final class Caiquemorais extends JavaPlugin {
     private VipManager vipManager;
     private HotbarManager hotbarManager;
     private ScoreboardManager scoreboardManager;
+    private LobbyManager lobbyManager;
 
     @Override
     public void onEnable() {
@@ -32,8 +36,9 @@ public final class Caiquemorais extends JavaPlugin {
         tagManager = new TagManager(this);
         chatManager = new ChatManager(tagManager);
         vipManager = new VipManager(this);
-        hotbarManager = new HotbarManager(this);
-        scoreboardManager = new ScoreboardManager(this);
+        lobbyManager = new LobbyManager(this);
+        hotbarManager = new HotbarManager(this, lobbyManager);
+        scoreboardManager = new ScoreboardManager(this, lobbyManager);
 
         // Registrar comandos
         getCommand("login").setExecutor(new LoginCommand(this));
@@ -44,12 +49,13 @@ public final class Caiquemorais extends JavaPlugin {
         getCommand("punir").setExecutor(new PunishCommand(this));
         getCommand("desbanir").setExecutor(new UnbanCommand(this));
         getCommand("checkpunir").setExecutor(new CheckPunishCommand(this));
+        getCommand("lobby").setExecutor(new LobbyCommand(this, lobbyManager));
 
         // Registrar eventos
         getServer().getPluginManager().registerEvents(new ChatListener(this, chatManager), this);
         getServer().getPluginManager().registerEvents(new VipPurchaseListener(this, vipManager), this);
         getServer().getPluginManager().registerEvents(hotbarManager, this);
-        getServer().getPluginManager().registerEvents(new ScoreboardListener(), this);
+        getServer().getPluginManager().registerEvents(new LobbyListener(), this);
 
         getLogger().info("Plugin Caiquemorais iniciado com sucesso!");
     }
@@ -68,11 +74,19 @@ public final class Caiquemorais extends JavaPlugin {
     public VipManager getVipManager() { return vipManager; }
     public HotbarManager getHotbarManager() { return hotbarManager; }
     public ScoreboardManager getScoreboardManager() { return scoreboardManager; }
+    public LobbyManager getLobbyManager() { return lobbyManager; }
 
-    private class ScoreboardListener implements Listener {
+    private class LobbyListener implements Listener {
         @EventHandler
         public void onPlayerJoin(PlayerJoinEvent event) {
-            scoreboardManager.showScoreboard(event.getPlayer());
+            Player player = event.getPlayer();
+            lobbyManager.assignPlayerToLobby(player);
+            scoreboardManager.showScoreboard(player);
+        }
+
+        @EventHandler
+        public void onPlayerQuit(PlayerQuitEvent event) {
+            lobbyManager.removePlayer(event.getPlayer());
         }
     }
 }

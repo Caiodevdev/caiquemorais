@@ -27,6 +27,9 @@ commands:
   checkpunir:
     description: Verifica as punições de um jogador
     usage: /checkpunir <jogador>
+  lobby:
+    description: Troca de lobby
+    usage: /lobby <lobby>
 permissions:
   caiquemorais.punish:
     description: Permite usar o comando /punir
